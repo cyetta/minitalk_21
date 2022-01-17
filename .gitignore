@@ -1,0 +1,10 @@
+.DS_Store
+.vscode/
+client
+server
+*.o
+*.d
+*.a
+client
+server
+en.subject.pdf
