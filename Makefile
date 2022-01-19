@@ -48,7 +48,7 @@ bonus:
 	make SRC_S="${BSRC_S}" ${SERVER_N}
 
 clean:
-	${RM} ${OBJ_CLI} {BOBJ_CLI} ${OBJ_SRV} ${BOBJ_SRV} ${DPDS}
+	${RM} ${OBJ_CLI} ${BOBJ_CLI} ${OBJ_SRV} ${BOBJ_SRV} ${DPDS}
 
 fclean:	clean
 	${RM} ${CLIENT_N} ${SERVER_N}
