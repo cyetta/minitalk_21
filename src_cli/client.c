@@ -6,11 +6,13 @@
 /*   By: cyetta <cyetta@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 20:16:54 by cyetta            #+#    #+#             */
-/*   Updated: 2022/01/17 20:19:45 by cyetta           ###   ########.fr       */
+/*   Updated: 2022/01/19 01:46:06 by cyetta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
+
 int	main(int argc, char *argv)
 {
-
+	return 0;
 }
