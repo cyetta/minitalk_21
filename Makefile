@@ -3,11 +3,12 @@ SERVER_N = server
 
 SRC_C = client.c
 SRC_S = server.c
-BSRC_C = client_bonus.c
+BSRC_C = client_bonus.c ft_util.c
 BSRC_S = server_bonus.c
 
 PATH_CLI = ./src_cli/
 PATH_SRV = ./src_srv/
+INCPATH = ${PATH_CLI}
 
 SRCS_CLI = ${addprefix ${PATH_CLI}, ${SRC_C}}
 SRCS_SRV = ${addprefix ${PATH_SRV}, ${SRC_S}}
@@ -30,7 +31,7 @@ CFLAG = -Wall -Wextra -Werror
 all:	${CLIENT_N} ${SERVER_N}
 
 %.o : %.c
-	${CC} ${CFLAG} -MMD -c $< -o $@
+	${CC} ${CFLAG} -MMD -c $< -o $@  -I${INCPATH}
 
 include ${wildcard ${DPDS}}
 
@@ -41,11 +42,11 @@ ${SERVER_N}:	${OBJ_SRV}
 	${CC} ${CFLAG} -o $@ ${OBJ_SRV}
 
 debug:
-	make CFLAG="${CFLAG} -g3" all
+	@make CFLAG="${CFLAG} -g3" all
 
 bonus:
-	make SRC_C="${BSRC_C}" ${CLIENT_N}
-	make SRC_S="${BSRC_S}" ${SERVER_N}
+	@make SRC_C="${BSRC_C}" ${CLIENT_N}
+	@make SRC_S="${BSRC_S}" ${SERVER_N}
 
 clean:
 	${RM} ${OBJ_CLI} ${BOBJ_CLI} ${OBJ_SRV} ${BOBJ_SRV} ${DPDS}

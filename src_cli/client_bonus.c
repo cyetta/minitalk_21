@@ -1,35 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cyetta <cyetta@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 20:16:54 by cyetta            #+#    #+#             */
-/*   Updated: 2022/01/21 21:09:30 by cyetta           ###   ########.fr       */
+/*   Updated: 2022/01/21 22:22:51 by cyetta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include "ft_util.h"
 
-int	ft_atoi(char *s)
+int volatile	g_count = 0;
+
+void	sighandler(int signal, siginfo_t *siginfo, void *context)
 {
-	unsigned int	val;
-	int				sign;
-
-	val = 0;
-	sign = 1;
-	if (*s != '-' && (*s < '0' || *s > '9'))
-		return (val);
-	else if (*s == '-')
-		sign = -1;
-	else
-		s--;
-	while (*(++s) && *s >= '0' && *s <= '9')
-		val = val * 10 + (*s - '0');
-	return ((int)val * sign);
+	(void)siginfo;
+	(void)context;
+	if (signal == SIGUSR1)
+		g_count++;
+	else if (signal == SIGUSR2)
+	{
+		write(1, "Total bytes recieved: ", 22);
+		ft_itoa(g_count);
+		write(1, "\n", 1);
+	}
 }
 
 void	send_char(pid_t pid, char ch)
@@ -47,8 +46,13 @@ void	send_char(pid_t pid, char ch)
 
 void	send_str(int pid, char *str)
 {
-	int	i;
+	struct sigaction	s_act;
+	int					i;
 
+	s_act.sa_flags = SA_SIGINFO;
+	s_act.sa_sigaction = sighandler;
+	sigaction(SIGUSR1, &s_act, NULL);
+	sigaction(SIGUSR2, &s_act, NULL);
 	i = -1;
 	while (str[++i])
 		send_char(pid, str[i]);

@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   ft_util.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cyetta <cyetta@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/17 20:16:54 by cyetta            #+#    #+#             */
-/*   Updated: 2022/01/21 21:09:30 by cyetta           ###   ########.fr       */
+/*   Created: 2022/01/21 18:44:54 by cyetta            #+#    #+#             */
+/*   Updated: 2022/01/21 18:49:45 by cyetta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <sys/types.h>
-#include <signal.h>
 
 int	ft_atoi(char *s)
 {
@@ -32,46 +30,25 @@ int	ft_atoi(char *s)
 	return ((int)val * sign);
 }
 
-void	send_char(pid_t pid, char ch)
+void	ft_itoa(int a)
 {
-	int	i;
+	unsigned int	n;
+	char			ch;
 
-	i = 8;
-	while (--i >= 0)
+	if (a < 0)
 	{
-		kill(pid, (ch >> i & 1) + SIGUSR1);
-		usleep(400);
+		write(1, "-", 1);
+		n = -a;
 	}
-	usleep(700);
-}
-
-void	send_str(int pid, char *str)
-{
-	int	i;
-
-	i = -1;
-	while (str[++i])
-		send_char(pid, str[i]);
-	send_char(pid, str[i]);
-}
-
-int	main(int argc, char **argv)
-{
-	int		pid;
-
-	if (argc != 3)
+	else
+		n = a;
+	if (a == 0)
+		write(1, "0", 1);
+	else
 	{
-		write(2, "Incorrect parameters, usage: client <server_PID> <\"ascii \
-string\"> \n", 67);
-		return (1);
+		if (n / 10)
+			ft_itoa(n / 10);
+		ch = '0' + n % 10;
+		write(1, &ch, 1);
 	}
-	pid = ft_atoi(argv[1]);
-	if (pid <= 0)
-	{
-		write(2, "Incorrect parameters, usage: client <server_PID> <\"ascii \
-string\"> \n", 67);
-		return (1);
-	}
-	send_str(pid, argv[2]);
-	return (0);
 }

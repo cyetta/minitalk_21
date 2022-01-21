@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cyetta <cyetta@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 20:17:03 by cyetta            #+#    #+#             */
-/*   Updated: 2022/01/21 17:05:07 by cyetta           ###   ########.fr       */
+/*   Updated: 2022/01/21 18:29:51 by cyetta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ typedef struct s_symb
 {
 	int		prnt_flg;
 	char	ch;
+	int		client_pid;
 }	t_symb;
 
 t_symb	g_symb;
@@ -49,14 +50,14 @@ void	sighandler(int signal, siginfo_t *siginfo, void *context)
 {
 	static int	a = 8;
 	static char	sym = 0;
-	static int	pid = 0;
 
 	(void)context;
-	if (siginfo->si_pid != pid)
+	if (siginfo->si_pid != g_symb.client_pid)
 	{
 		a = 8;
+		g_symb.prnt_flg = 0;
 		sym = 0;
-		pid = siginfo->si_pid;
+		g_symb.client_pid = siginfo->si_pid;
 	}
 	sym = (sym << 1) | (signal - SIGUSR1);
 	if (!--a)
@@ -65,6 +66,18 @@ void	sighandler(int signal, siginfo_t *siginfo, void *context)
 		g_symb.prnt_flg = 1;
 		a = 8;
 	}
+}
+
+void	writesym(void)
+{
+	if (g_symb.ch)
+		write(1, &(g_symb.ch), 1);
+	else
+		write(1, "\n", 1);
+	if (g_symb.ch)
+		kill(g_symb.client_pid, SIGUSR1);
+	else
+		kill(g_symb.client_pid, SIGUSR2);
 }
 
 int	main(void)
@@ -82,10 +95,7 @@ int	main(void)
 	{
 		if (g_symb.prnt_flg)
 		{
-			if (g_symb.ch)
-				write(1, &(g_symb.ch), 1);
-			else
-				write(1, "\n", 1);
+			writesym();
 			g_symb.prnt_flg = 0;
 		}
 		pause();
